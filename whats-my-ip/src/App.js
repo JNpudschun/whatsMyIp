@@ -2,37 +2,53 @@
 import './App.css';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
+import { Map, Marker } from 'pigeon-maps'
 
 function App() {
   const [ip, setIp] = useState("");
   const [countryCode, setCountryCode] = useState("");
   const[countryInfo, setCountryInfo] = useState([]);
+  const[displayInfo,setDisplayInfo] = useState({name: "", timezone:"",flag:"",capital:""});
+  const [center, setCenter] = useState([69, 42])
+  const [zoom, setZoom] = useState(11)
+  const [hue, setHue] = useState(0)
+  const [loading, setLoading] = useState(false);
+  const color = `hsl(${hue % 360}deg 39% 70%)`
   const API_KEY = process.env.REACT_APP_API_KEY;
 
-  function getData(){
+  
+  async function getData(){
+    try{  
       let url = "https://geo.ipify.org/api/v2/country?apiKey="+API_KEY;
-      // console.log(url)
-      axios.get(url).then(res=>{
-        console.log(res.data)
-        setIp(res.data.ip);
-        setCountryCode(res.data.location.country);
-        console.log(ip)
+      console.log(url)
+      const response = await axios.get(url);
+      console.log(response.data)
+      setIp(response.data.ip);
+      setCountryCode(response.data.location.country) 
+      console.log(ip)
       console.log(countryCode)
-      }).catch(error => console.log(error))
+      // url = "https://restcountries.com/v2/alpha/"+countryCode;
+      const response2 = await axios.get("https://restcountries.com/v2/alpha/"+response.data.location.country)
+      setCountryInfo(response2.data)
+      console.log(response2.data)
+      
+      console.log(center)
+      return response2.data;
+    }catch(e){
+        console.log(e)
+    }
   }
-  function getCountryData(){
-    let url = "https://restcountries.com/v2/alpha/"+countryCode;
-    console.log(url)
-    axios.get(url).then(res=>
-      {console.log(res.data);
-      setCountryInfo(res.data)}).catch(error=>console.log(error))
-  }
+ 
   useEffect(()=>{
-    getData();
-    console.log(ip)
-    console.log(countryCode)
-    getCountryData();
-    console.log(countryInfo)
+      async function setup() {
+        setLoading(true)
+        let info = await getData();
+        console.log(info)
+        setCenter(info.latlng)
+        setDisplayInfo({name: info.name, timezone: info.timezones , flag: info.flag , capital: info.capital})
+        setLoading(false)
+      }
+    setup();
   },[])
 
   return (
@@ -43,8 +59,31 @@ function App() {
 
       <div>
             <h2>Your IP-Adresse is:</h2>
-            <h3>{ip}</h3>
-            {/* <MyMap/> */}
+            {loading ? (<p>Loading...</p>):(
+            <div>
+              <h3>{ip}</h3>
+              <Map 
+                height={300}
+                center={center} 
+                zoom={zoom} 
+                onBoundsChanged={({ center, zoom }) => { 
+                  setCenter(center) 
+                  setZoom(zoom) 
+                }} 
+              >
+                <Marker 
+                  width={50}
+                  anchor={[center[0],center[1]]} 
+                  color={color} 
+                  onClick={() => setHue(hue + 20)} 
+                />
+              </Map>
+              <img src={displayInfo.flag} alt="flag"/>
+              <p>Country:{displayInfo.name}</p>
+              <p>Capital:{displayInfo.capital}</p>
+              <p>Timezone:{displayInfo.timezone}</p>
+            </div> )}
+             
         </div>
     </div>
   );
