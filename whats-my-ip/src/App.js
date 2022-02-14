@@ -66,7 +66,7 @@ function App() {
                   height={300}
                   
                   center={center} 
-                  zoom={zoom} 
+                  zoom={5} 
                   onBoundsChanged={({ center, zoom }) => { 
                     setCenter(center) 
                     setZoom(zoom) 
