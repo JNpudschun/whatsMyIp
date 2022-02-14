@@ -61,26 +61,37 @@ function App() {
             {loading ? (<p>Loading...</p>):(
             <div>
               <h3>{ip}</h3>
-              <Map 
-                height={300}
-                center={center} 
-                zoom={zoom} 
-                onBoundsChanged={({ center, zoom }) => { 
-                  setCenter(center) 
-                  setZoom(zoom) 
-                }} 
-              >
-                <Marker 
-                  width={50}
-                  anchor={[center[0],center[1]]} 
-                  color={color} 
-                  onClick={() => setHue(hue + 20)} 
-                />
-              </Map>
-              <img src={displayInfo.flag} alt="flag"/>
-              <p>Country:{displayInfo.name}</p>
-              <p>Capital:{displayInfo.capital}</p>
-              <p>Timezone:{displayInfo.timezone}</p>
+              <div className = "country">
+                <Map 
+                  height={300}
+                  
+                  center={center} 
+                  zoom={zoom} 
+                  onBoundsChanged={({ center, zoom }) => { 
+                    setCenter(center) 
+                    setZoom(zoom) 
+                  }} 
+                >
+                  <Marker 
+                    width={50}
+                    anchor={[center[0],center[1]]} 
+                    color={color} 
+                    onClick={() => setHue(hue + 20)} 
+                  />
+                </Map>
+                <div className="country-container">
+                  <div className ="flag">
+                    <img src={displayInfo.flag} alt="flag"width="50%" />
+                  </div>
+                  <div className="info">
+                    <p>Country:{displayInfo.name}</p>
+                    <p>Capital:{displayInfo.capital}</p>
+                    <p>Timezone:{displayInfo.timezone}</p>
+                  </div>
+                </div>
+              </div>
+              
+              
             </div> )}
              
         </div>
