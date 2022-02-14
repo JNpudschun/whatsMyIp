@@ -7,9 +7,8 @@ import { Map, Marker } from 'pigeon-maps'
 function App() {
   const [ip, setIp] = useState("");
   const [countryCode, setCountryCode] = useState("");
-  const[countryInfo, setCountryInfo] = useState([]);
   const[displayInfo,setDisplayInfo] = useState({name: "", timezone:"",flag:"",capital:""});
-  const [center, setCenter] = useState([69, 42])
+  const [center, setCenter] = useState([])
   const [zoom, setZoom] = useState(11)
   const [hue, setHue] = useState(0)
   const [loading, setLoading] = useState(false);
@@ -29,7 +28,7 @@ function App() {
       console.log(countryCode)
       // url = "https://restcountries.com/v2/alpha/"+countryCode;
       const response2 = await axios.get("https://restcountries.com/v2/alpha/"+response.data.location.country)
-      setCountryInfo(response2.data)
+      
       console.log(response2.data)
       
       console.log(center)
